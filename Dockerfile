@@ -17,22 +17,28 @@ RUN apt-get install -y libtidy-dev
 RUN mkdir /opt/hadoop
 WORKDIR /opt/hadoop
 
-RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz
-RUN tar -xzf hadoop-3.3.0.tar.gz
+RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.0/hadoop-3.3.0.tar.gz && \
+    tar -xzf hadoop-3.3.0.tar.gz
+
+WORKDIR /opt
+RUN wget https://mirrors.ucr.ac.cr/apache/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz && \
+    tar -xzf apache-hive-3.1.2-bin.tar.gz && \
+    rm apache-hive-3.1.2-bin.tar.gz
+
 
 RUN adduser --disabled-password --gecos "" hadoopuser
 RUN echo "hadoopuser:hadoop" | chpasswd
 
-RUN mkdir /home/hadoopuser/tmpdata
-RUN mkdir /home/hadoopuser/tmpdata/dfs
-RUN mkdir /home/hadoopuser/tmpdata/dfs/name
-RUN mkdir /home/hadoopuser/tmpdata/dfs/name/current
-RUN mkdir /home/hadoopuser/dfsdata
-RUN mkdir /home/hadoopuser/dfsdata/namenode
-RUN mkdir /home/hadoopuser/dfsdata/datanode
-RUN chmod a+rw -R /home/hadoopuser/tmpdata
-RUN chmod a+rw -R /home/hadoopuser/dfsdata
-RUN mkdir /home/hadoopuser/mapr
+RUN mkdir /home/hadoopuser/tmpdata && \
+    mkdir /home/hadoopuser/tmpdata/dfs  && \
+    mkdir /home/hadoopuser/tmpdata/dfs/name  && \
+    mkdir /home/hadoopuser/tmpdata/dfs/name/current  && \
+    mkdir /home/hadoopuser/dfsdata  && \
+    mkdir /home/hadoopuser/dfsdata/namenode  && \
+    mkdir /home/hadoopuser/dfsdata/datanode  && \
+    chmod a+rw -R /home/hadoopuser/tmpdata  && \
+    chmod a+rw -R /home/hadoopuser/dfsdata  && \
+    mkdir /home/hadoopuser/mapr
 
 COPY ./etc/bashrc /etc
 COPY ./etc/bashrc /home/hadoopuser/.bashrc
@@ -50,9 +56,16 @@ COPY /hadoop/etc/hdfs-site.xml /opt/hadoop/hadoop-3.3.0/etc/hadoop
 COPY /hadoop/etc/mapred-site.xml /opt/hadoop/hadoop-3.3.0/etc/hadoop
 COPY /hadoop/etc/yarn-site.xml /opt/hadoop/hadoop-3.3.0/etc/hadoop
 
+COPY /hive/bin/hive-config.sh /opt/apache-hive-3.1.2-bin/bin
+COPY /hive/conf/hive-site.xml /opt/apache-hive-3.1.2-bin/conf
+
 WORKDIR /home/hadoopuser
 COPY /start.sh /home/hadoopuser
 RUN chmod +x start.sh
+COPY /hive-setup.sh /home/hadoopuser
+RUN chmod +x hive-setup.sh
+
+
 
 RUN mkdir /opt/hadoop/hadoop-3.3.0/logs
 RUN chmod ugo+rwx /opt/hadoop/hadoop-3.3.0/logs
