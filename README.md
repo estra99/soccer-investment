@@ -1,4 +1,4 @@
-## Repository for course database II
+## Repository for course: database II
 This readme helps you to perform the intended labs in classroom regarding topics such as mapreduce with hadoop, hive, spark and kafka.
 
 ### docker related  
