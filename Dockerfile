@@ -25,6 +25,10 @@ RUN wget https://mirrors.ucr.ac.cr/apache/hive/hive-3.1.2/apache-hive-3.1.2-bin.
     tar -xzf apache-hive-3.1.2-bin.tar.gz && \
     rm apache-hive-3.1.2-bin.tar.gz
 
+RUN wget https://mirrors.ucr.ac.cr/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz && \
+    tar -xzf kafka_2.13-2.6.0.tgz && \
+    rm kafka_2.13-2.6.0.tgz
+
 
 RUN adduser --disabled-password --gecos "" hadoopuser
 RUN echo "hadoopuser:hadoop" | chpasswd
@@ -64,6 +68,8 @@ COPY /start.sh /home/hadoopuser
 RUN chmod +x start.sh
 COPY /hive-setup.sh /home/hadoopuser
 RUN chmod +x hive-setup.sh
+
+COPY /start-kafka.sh /home/hadoopuser
 
 
 
