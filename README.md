@@ -1,7 +1,7 @@
 ## Repository for course database II
 This readme helps you to perform the intended labs in classroom regarding topics such as mapreduce with hadoop, hive, spark and kafka.
 
-### Docker related  
+### docker related  
 Build the image, create an internal network and run the image using a local volumen
 path to share files and jars from the host computer
 ```
@@ -9,7 +9,7 @@ docker build . -t hadoop
 
 docker network create --driver bridge --subnet 10.0.0.0/28 littlenet
 
-docker run -it -p 9000:9000 -p 9092:9092 -p 22:22 -v C:\Dev\docker\hadoop\mapr:/home/hadoopuser/mapr --name hadoopserver --net mongonet --ip 10.0.0.2 hadoop
+docker run -it -p 9000:9000 -p 9092:9092 -p 22:22 -v C:\Dev\docker\hadoop\mapr:/home/hadoopuser/mapr --name hadoopserver --net littlenet --ip 10.0.0.2 hadoop
 ```
 
 This is an example of how to manually copy files from the host to the container 
@@ -46,6 +46,8 @@ hadoop jar maprexample.jar main.program /data/input/datadates.csv /data/output
 
 ### hive related
 To setup the hive environment just run the `hive-setup.sh` script located in hadoopuser home folder
+
+Then access the hive console with `hive`
 
 The following is an example of instructions in hive console to test your hive environment. The example loads the content of the CSV file datasales.dat into a temporary table where all the fields are string. Following the transfer of the data to the correct table using data types. 
 
