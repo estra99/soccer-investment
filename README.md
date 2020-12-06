@@ -1,7 +1,7 @@
-### Repository for course database II
+## Repository for course database II
 This readme helps you to perform the intended labs in classroom regarding topics such as mapreduce with hadoop, hive, spark and kafka.
 
-## Docker related  
+### Docker related  
 Build the image, create an internal network and run the image using a local volumen
 path to share files and jars from the host computer
 ```
@@ -18,7 +18,7 @@ docker cp maprexample.jar hadoopserver:/home/hadoopuser
 docker cp datadates.csv  hadoopserver:/home/hadoopuser
 ```
 
-## ssh related
+### ssh related
 The image includes a default user setup, the user "hadoopuser" must grant passwordless access by ssh, this is required for the hadoop server
 
 ```
@@ -29,7 +29,7 @@ ssh-copy-id hadoopuser@localhost
 exit
 ```
 
-## hadoop related
+### hadoop related
 These are the commands to start/stop the hadoop single node cluster 
 ```
 start-all.sh
@@ -44,7 +44,7 @@ hadoop fs -copyFromLocal datasales.dat /data/input
 hadoop jar maprexample.jar main.program /data/input/datadates.csv /data/output
 ```
 
-## hive related
+### hive related
 To setup the hive environment just run the `hive-setup.sh` script located in hadoopuser home folder
 
 The following is an example of instructions in hive console to test your hive environment. The example loads the content of the CSV file datasales.dat into a temporary table where all the fields are string. Following the transfer of the data to the correct table using data types. 
@@ -76,7 +76,7 @@ SELECT anyo, MAX(monto) from (
 group by anyo;
 ```
 
-## Kakfa related
+### Kakfa related
 To start the kafkta server just the script `start-kafka.sh` located in the hadoopuser home folder.
 
 To test your Kafka environment follow the [kafka quickstart guide](https://kafka.apache.org/quickstart) 
