@@ -1,7 +1,5 @@
 from ubuntu
 
-ENV SPARK_HOME=/usr/lib/python3.7/site-packages/pyspark
-
 RUN apt update && apt upgrade -y
 RUN apt-get install -y default-jre
 RUN apt-get install -y openjdk-8-jdk
@@ -15,16 +13,6 @@ RUN apt-get -y install yarn
 RUN apt-get install -y nodejs
 RUN apt install git-all -y
 RUN apt-get install -y libtidy-dev
-
-RUN apt-get -y install postgresql-client && \
-  apt-get -y install postgresql-client python3 && \
-  apt-get -y install python3.8 && \
-  apt update && \
-  apt install -y python3-pip && \
-  pip3 install --upgrade pip && \
-  pip3 install pyspark && \
-  pip3 install pytest && \
-  ln /usr/bin/python3.8 /usr/bin/python
 
 RUN mkdir /opt/hadoop
 WORKDIR /opt/hadoop
@@ -40,8 +28,6 @@ RUN wget https://mirrors.ucr.ac.cr/apache/hive/hive-3.1.2/apache-hive-3.1.2-bin.
 RUN wget https://mirrors.ucr.ac.cr/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz && \
     tar -xzf kafka_2.13-2.6.0.tgz && \
     rm kafka_2.13-2.6.0.tgz
-
-ENV SPARK_HOME=/usr/lib/python3.7/site-packages/pyspark
 
 RUN adduser --disabled-password --gecos "" hadoopuser
 RUN echo "hadoopuser:hadoop" | chpasswd
