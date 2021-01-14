@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="mapRexample:jar">
+    <output-path>$PROJECT_DIR$/classes/artifacts/mapRexample_jar</output-path>
+    <root id="archive" name="mapRexample.jar">
+      <element id="module-output" name="mapRexample" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/hadoop-core-1.2.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
