@@ -8,7 +8,7 @@ start-all.sh
 cd mapr/
 hadoop fs -copyFromLocal Player.csv /data/input
 hadoop fs -copyFromLocal Player_Attributes.csv /data/input
-hadoop fs -copyFromLocal European_Rosters.csv /data/input
+hadoop fs -copyFromLocal European_Rosters.tsv /data/input
 '''
 ### Pipeline en Hive
 '''
@@ -66,8 +66,15 @@ SELECT MONTH(date_update) from tmp_jugadores_detalles where id = 183978;
 '''
 ## Pipeline en MapR
 '''
-// 1. procesar los datos, filtra por país elegido y los limpia para dejarlos en un archivo
-hadoop jar procesa_mercado.jar main.program /data/input/European_Rosters.csv /data/output
+// 1. procesar los datos, filtra por país elegido (Francia) y para dejarlos en un archivo separado por tabs (\t)
+hadoop jar mapRMercado.jar main.program /data/input/European_Rosters.tsv /data/output
+
+//Commandos para pruebas
+hadoop fs -copyToLocal /data/output/part-r-00000 /home/hadoopuser/mapr //pasar el archivo de hfs a local
+
+//Limpiar la carpeta de output para una nueva corrida
+hadoop fs -rm /data/output/* 
+hadoop fs -rmdir /data/output/
 
 // 2. visualizar el archivo
 hadoop fs -ls /data/output
@@ -75,9 +82,34 @@ hadoop fs -cat /data/output/part-r-00000
 
 // 3. pasar el archivo a una tabla en Hive
 
-// 4. cruzar las tablas y combinarlas
+create table tmp_jugadoresMercado(nombre_jugador string, club string, fecha_nacimiento string, posicion string, precio_actual integer, precio_maximo integer) row format delimited fields terminated by '\t';
+
+load data inpath '/data/output/part-r-00000' into table tmp_jugadoresMercado;
+
+CREATE TABLE IF NOT EXISTS Jugador_Mercado (nombre_jugador string, club string, fecha_nacimiento string, posicion string, precio_actual integer, precio_maximo integer)
+COMMENT 'Valor en el mercado de los jugadores'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+
+INSERT INTO Jugador_Mercado (nombre_jugador, club, fecha_nacimiento, posicion, precio_actual, precio_maximo)
+SELECT nombre_jugador, club, fecha_nacimiento, posicion, precio_actual, precio_maximo
+FROM tmp_jugadoresMercado;
+
+// 4. Query para cruzar las tablas y combinarlas
+
+SELECT jugador.id_jugador, jugador.nombre, jugador_mercado.fecha_nacimiento, detalles_jugador.rating_general, detalles_jugador.potencial, jugador_mercado.precio_actual, jugador_mercado.precio_maximo
+FROM Jugador
+JOIN Detalles_Jugador 
+ON jugador.id_jugador = detalles_jugador.id_jugador
+JOIN Jugador_Mercado
+ON jugador.nombre = jugador_mercado.nombre_jugador
+WHERE jugador_mercado.precio_maximo is not null and jugador_mercado.precio_actual is not null;
 
 '''
 ### FIN DEL DATAMART
 
 ### Análisis en PySpark
+
+
