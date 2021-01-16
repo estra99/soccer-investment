@@ -73,7 +73,7 @@ hadoop jar mapRMercado.jar main.program /data/input/European_Rosters.tsv /data/o
 hadoop fs -copyToLocal /data/output/part-r-00000 /home/hadoopuser/mapr //pasar el archivo de hfs a local
 
 //Limpiar la carpeta de output para una nueva corrida
-hadoop fs -rm /data/output/* 
+hadoop fs -rm /data/output/*
 hadoop fs -rmdir /data/output/
 
 // 2. visualizar el archivo
@@ -101,7 +101,7 @@ FROM tmp_jugadoresMercado;
 
 SELECT jugador.id_jugador, jugador.nombre, jugador_mercado.fecha_nacimiento, detalles_jugador.rating_general, detalles_jugador.potencial, jugador_mercado.precio_actual, jugador_mercado.precio_maximo
 FROM Jugador
-JOIN Detalles_Jugador 
+JOIN Detalles_Jugador
 ON jugador.id_jugador = detalles_jugador.id_jugador
 JOIN Jugador_Mercado
 ON jugador.nombre = jugador_mercado.nombre_jugador
@@ -111,5 +111,3 @@ WHERE jugador_mercado.precio_maximo is not null and jugador_mercado.precio_actua
 ### FIN DEL DATAMART
 
 ### Análisis en PySpark
-
-
