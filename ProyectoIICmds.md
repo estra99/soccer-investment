@@ -81,7 +81,6 @@ hadoop fs -ls /data/output
 hadoop fs -cat /data/output/part-r-00000
 
 // 3. pasar el archivo a una tabla en Hive
-
 create table tmp_jugadoresMercado(nombre_jugador string, club string, fecha_nacimiento string, posicion string, precio_actual integer, precio_maximo integer) row format delimited fields terminated by '\t';
 
 load data inpath '/data/output/part-r-00000' into table tmp_jugadoresMercado;
@@ -98,8 +97,7 @@ SELECT nombre_jugador, club, fecha_nacimiento, posicion, precio_actual, precio_m
 FROM tmp_jugadoresMercado;
 
 // 4. Query para cruzar las tablas y combinarlas
-
-SELECT jugador.id_jugador, jugador.nombre, jugador_mercado.fecha_nacimiento, detalles_jugador.rating_general, detalles_jugador.potencial, jugador_mercado.precio_actual, jugador_mercado.precio_maximo
+SELECT jugador.id_jugador, jugador.nombre, jugador_mercado.club, jugador_mercado.fecha_nacimiento, detalles_jugador.rating_general, detalles_jugador.potencial, jugador_mercado.precio_actual, jugador_mercado.precio_maximo
 FROM Jugador
 JOIN Detalles_Jugador
 ON jugador.id_jugador = detalles_jugador.id_jugador
@@ -111,3 +109,25 @@ WHERE jugador_mercado.precio_maximo is not null and jugador_mercado.precio_actua
 ### FIN DEL DATAMART
 
 ### Análisis en PySpark
+'''
+//1. Sacar la consulta de hive a un archivo para exportarla a PySpark
+hive -e "use jugadores; SELECT jugador.id_jugador, jugador.nombre, jugador_mercado.club, jugador_mercado.fecha_nacimiento, detalles_jugador.rating_general, detalles_jugador.potencial, jugador_mercado.precio_actual, jugador_mercado.precio_maximo
+FROM Jugador
+JOIN Detalles_Jugador
+ON jugador.id_jugador = detalles_jugador.id_jugador
+JOIN Jugador_Mercado
+ON jugador.nombre = jugador_mercado.nombre_jugador
+WHERE jugador_mercado.precio_maximo is not null and jugador_mercado.precio_actual is not null" > /home/hadoopuser/mapr/playersDataMart.tsv
+
+//2. Copiar el archivo en la carpeta compartida PySpark Examples.
+
+//3. Crear el archivo en PySpark para análisis del DataMart.
+
+//4. Correr el contenedor de PySpark
+docker run -it --rm -v ~/Documents/dev/bd2/hadoopbases2/pyspark/examples:/src pyspark bash
+
+//5. Ejecutar el análisis del DataMart
+spark-submit analisis.py 
+'''
+### Visualizacion
+
